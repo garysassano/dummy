@@ -29,6 +29,10 @@ jobs:
       - uses: taiki-e/install-action@cargo-lambda
       - uses: Swatinem/rust-cache@v2
 
+      - name: Build Lambda Binary
+        run: cargo lambda build --release --arm64
+        working-directory: src/functions/client-rust
+
       - name: Upload Lambda Artifact
         uses: actions/upload-artifact@v4
         with:
