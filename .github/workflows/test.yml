@@ -1,0 +1,50 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - wip
+      - wip2
+      - wip3
+      - wip4
+  pull_request:
+    branches:
+      - "**"
+
+jobs:
+  build-lambda:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.0
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: taiki-e/install-action@cargo-lambda
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Upload Lambda Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-rust-lambda-arm64
+          path: target/lambda/client-rust
+          if-no-files-found: error
+
+  deploy:
+    needs: build-lambda
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Lambda Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: client-rust-lambda-arm64
+          path: target/lambda/client-rust
