@@ -23,22 +23,16 @@ jobs:
       - name: Setup Zig
         uses: mlugg/setup-zig@v2
         with:
-          version: 0.14.0
+          version: 0.14.1
+          use-cache: false
 
       - uses: dtolnay/rust-toolchain@stable
       - uses: taiki-e/install-action@cargo-lambda
       - uses: Swatinem/rust-cache@v2
 
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.9
-
       - name: Build Lambda Binary
         run: cargo lambda build --release --arm64
         working-directory: src/functions/client-rust
-        env:
-          SCCACHE_GHA_ENABLED: 'true'
-          RUSTC_WRAPPER: 'sccache'
-          CARGO_INCREMENTAL: false
 
       - name: Upload Lambda Artifact
         uses: actions/upload-artifact@v4
