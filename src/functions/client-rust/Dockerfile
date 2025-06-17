@@ -7,14 +7,19 @@ RUN cargo install cargo-lambda
 # Set the working directory
 WORKDIR /app
 
-# Copy the Cargo.toml and Cargo.lock files
-COPY Cargo.toml ./
+# Copy the workspace root files first
+COPY ../../Cargo.toml ./
+COPY ../../Cargo.lock ./
 
-# Copy the source code
-COPY src ./src
+# Create the directory structure for the workspace member
+RUN mkdir -p src/functions/client-rust
+
+# Copy the function's Cargo.toml and source code
+COPY Cargo.toml ./src/functions/client-rust/
+COPY src ./src/functions/client-rust/src
 
 # Build the Lambda function for ARM64
-RUN cargo lambda build --release --arm64
+RUN cargo lambda build --release --arm64 --package client-rust
 
 # Export stage - copy the built binary to a scratch image
 FROM scratch AS export
