@@ -1,5 +1,5 @@
 # Use the official Rust image as the base
-FROM --platform=$BUILDPLATFORM rust:latest AS builder
+FROM rust:alpine AS builder
 
 # Install Zig for cross-compilation (recommended way)
 RUN apt-get update && apt-get install -y wget xz-utils && \
