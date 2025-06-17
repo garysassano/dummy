@@ -26,7 +26,8 @@ jobs:
       - name: Build Lambda Binary with Docker
         uses: docker/build-push-action@v6
         with:
-          context: src/functions/client-rust
+          context: .
+          file: src/functions/client-rust/Dockerfile
           platforms: linux/arm64
           push: false
           outputs: type=local,dest=./build-output
@@ -37,7 +38,7 @@ jobs:
       - name: Upload Lambda Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: otlp-ch-forwarder-lambda-arm64
+          name: client-rust-lambda-arm64
           path: build-output/
           if-no-files-found: error
 
