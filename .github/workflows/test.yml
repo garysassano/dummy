@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-      - wip
+      - wip1
       - wip2
       - wip3
       - wip4
