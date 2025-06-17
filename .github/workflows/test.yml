@@ -20,25 +20,25 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Zig
-        uses: mlugg/setup-zig@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Lambda Binary with Docker
+        uses: docker/build-push-action@v6
         with:
-          version: 0.14.1
-          use-cache: false
-
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: taiki-e/install-action@cargo-lambda
-      - uses: Swatinem/rust-cache@v2
-
-      - name: Build Lambda Binary
-        run: cargo lambda build --release --arm64
-        working-directory: src/functions/client-rust
+          context: lib/functions/otlp-ch-forwarder
+          platforms: linux/arm64
+          push: false
+          outputs: type=local,dest=./build-output
+          cache-to: type=gha,mode=max,scope=lambda-build
+          cache-from: type=gha,scope=lambda-build
+          target: export
 
       - name: Upload Lambda Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: client-rust-lambda-arm64
-          path: target/lambda/client-rust
+          name: otlp-ch-forwarder-lambda-arm64
+          path: build-output/
           if-no-files-found: error
 
   deploy:
