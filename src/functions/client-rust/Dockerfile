@@ -18,4 +18,4 @@ RUN cargo lambda build --release --arm64
 
 # Export stage - copy the built binary to a scratch image
 FROM scratch AS export
-COPY --from=builder /app/target/lambda/otlp-ch-forwarder/bootstrap /bootstrap
+COPY --from=builder /app/target/lambda/client-rust/bootstrap /bootstrap
