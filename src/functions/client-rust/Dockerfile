@@ -1,5 +1,5 @@
 # Use the official Rust image as the base
-FROM --platform=$BUILDPLATFORM rust:1.75 AS builder
+FROM --platform=$BUILDPLATFORM rust:1.85 AS builder
 
 # Install cargo-lambda for building AWS Lambda functions
 RUN cargo install cargo-lambda
