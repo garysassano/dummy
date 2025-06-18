@@ -8,7 +8,8 @@ RUN set -eux; \
     rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
 
 # Install Zig for cross-compilation
-RUN curl -fsSL "https://ziglang.org/download/0.13.0/zig-linux-$(uname -m)-0.13.0.tar.xz" | \
+ARG ZIG_VERSION=0.14.0
+RUN curl -fsSL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-$(uname -m)-${ZIG_VERSION}.tar.xz" | \
     tar -xJ -C /opt && mv /opt/zig-linux-* /opt/zig
 ENV PATH="/opt/zig:${PATH}"
 
