@@ -28,7 +28,6 @@ jobs:
         with:
           context: .
           file: src/functions/client-rust/Dockerfile
-          platforms: linux/amd64
           push: false
           outputs: type=local,dest=./build-output
           cache-to: type=gha,mode=max,scope=lambda-build-${{ hashFiles('src/functions/client-rust/Cargo.toml') }}
