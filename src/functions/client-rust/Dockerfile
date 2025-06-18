@@ -1,14 +1,12 @@
-# Use the pre-built cargo-chef image with Rust (Alpine variant for smaller size)
+# Use the pre-built cargo-chef image with Rust and add Zig
 FROM lukemathwalker/cargo-chef:latest-rust-alpine AS chef
 
-# Install Zig for cross-compilation (recommended way)
-RUN apk add --no-cache wget xz && \
-    wget -q https://ziglang.org/download/0.13.0/zig-linux-x86_64-0.13.0.tar.xz && \
-    tar -xf zig-linux-x86_64-0.13.0.tar.xz -C /opt && \
-    rm zig-linux-x86_64-0.13.0.tar.xz
-
-# Add Zig to PATH
-ENV PATH="/opt/zig-linux-x86_64-0.13.0:${PATH}"
+# Install Zig (lightweight version for cargo-zigbuild)
+ARG ZIGVER=0.14.1
+RUN apk add --no-cache curl xz && \
+    curl -L "https://ziglang.org/download/${ZIGVER}/zig-linux-$(uname -m)-${ZIGVER}.tar.xz" | \
+    tar -xJ -C /usr/local --strip-components=1 && \
+    rm -rf /var/cache/apk/*
 
 # Install cargo-lambda for building AWS Lambda functions
 RUN cargo install cargo-lambda
