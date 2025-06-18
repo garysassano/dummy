@@ -50,3 +50,4 @@ RUN zig version && zig cc --version && cargo lambda build --release --arm64 --pa
 # Export stage - copy the built binary to a scratch image
 FROM scratch AS export
 COPY --from=builder /app/target/lambda/client-rust/bootstrap /bootstrap
+
