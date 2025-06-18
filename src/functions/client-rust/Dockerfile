@@ -1,5 +1,5 @@
-# Use the pre-built cargo-chef image with Rust
-FROM lukemathwalker/cargo-chef:latest-rust-alpine AS chef
+# Use the pre-built cargo-chef image with Rust (Debian-based for better tooling)
+FROM lukemathwalker/cargo-chef:latest-rust-1 AS chef
 
 # Add ARM64 target for cross-compilation
 RUN rustup target add aarch64-unknown-linux-gnu
