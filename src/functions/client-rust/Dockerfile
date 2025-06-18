@@ -7,7 +7,7 @@ RUN set -eux; \
     rustup toolchain install stable; \
     rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
 
-# Install Zig (lightweight version for cargo-zigbuild)
+# Install Zig (required by cargo-lambda for cross-compilation)
 ARG ZIG_VERSION=0.14.0
 RUN apk add --no-cache curl xz && \
     curl -fsSL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-$(uname -m)-${ZIG_VERSION}.tar.xz" | \
