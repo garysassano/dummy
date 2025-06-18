@@ -20,12 +20,7 @@ WORKDIR /app
 
 # Planner stage - create recipe for dependencies
 FROM chef AS planner
-COPY Cargo.toml ./
-COPY Cargo.lock ./
-COPY src/functions/client-rust/Cargo.toml ./src/functions/client-rust/
-# Create dummy source files for workspace structure
-RUN mkdir -p src/functions/client-rust/src && \
-    echo "fn main() {}" > src/functions/client-rust/src/main.rs
+COPY . .
 RUN cargo chef prepare --recipe-path recipe.json
 
 # Cacher stage - build dependencies only
@@ -35,11 +30,9 @@ RUN cargo chef cook --release --recipe-path recipe.json
 
 # Builder stage - build the actual application
 FROM chef AS builder
-COPY --from=cacher /app/target target
-COPY Cargo.toml ./
-COPY Cargo.lock ./
-COPY src/functions/client-rust/Cargo.toml ./src/functions/client-rust/
-COPY src/functions/client-rust/src ./src/functions/client-rust/src
+COPY --from=cacher /app/recipe.json recipe.json
+RUN cargo chef cook --release --recipe-path recipe.json
+COPY . .
 
 # Build the Lambda function for ARM64
 RUN cargo lambda build --release --arm64 --package client-rust
