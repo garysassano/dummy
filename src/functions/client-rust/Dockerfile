@@ -8,10 +8,11 @@ RUN set -eux; \
     rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
 
 # Install Zig for cross-compilation (recommended way)
-RUN apk add --no-cache wget xz && \
+RUN apt-get update && apt-get install -y wget xz-utils && \
     wget -q https://ziglang.org/download/0.13.0/zig-linux-x86_64-0.13.0.tar.xz && \
     tar -xf zig-linux-x86_64-0.13.0.tar.xz -C /opt && \
-    rm zig-linux-x86_64-0.13.0.tar.xz
+    rm zig-linux-x86_64-0.13.0.tar.xz && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Add Zig to PATH
 ENV PATH="/opt/zig-linux-x86_64-0.13.0:${PATH}"
