@@ -1,5 +1,8 @@
 # Use the official Rust image as the base
-FROM rust:latest AS builder
+FROM rust:alpine AS builder
+
+# Install dependencies
+RUN apk add --no-cache curl xz
 
 # Add cross-compilation targets
 RUN set -eux; \
@@ -7,10 +10,8 @@ RUN set -eux; \
     rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
 
 # Install Zig for cross-compilation
-RUN apt-get update && apt-get install -y --no-install-recommends xz-utils && \
-    curl -fsSL "https://ziglang.org/download/0.13.0/zig-linux-$(uname -m)-0.13.0.tar.xz" | \
-    tar -xJ -C /opt && mv /opt/zig-linux-* /opt/zig && \
-    apt-get purge -y xz-utils && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL "https://ziglang.org/download/0.13.0/zig-linux-$(uname -m)-0.13.0.tar.xz" | \
+    tar -xJ -C /opt && mv /opt/zig-linux-* /opt/zig
 ENV PATH="/opt/zig:${PATH}"
 
 # Install cargo-lambda (pre-built binary)
