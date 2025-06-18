@@ -1,8 +1,6 @@
 # Use the official Rust image as the base
-FROM rust:alpine AS builder
-
-# Install dependencies
-RUN apk add --no-cache curl xz musl-dev
+ARG RUST_VERSION=1.85.0
+FROM rust:${RUST_VERSION} AS builder
 
 # Add cross-compilation targets
 RUN set -eux; \
