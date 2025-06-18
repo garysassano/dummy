@@ -1,11 +1,22 @@
-# Use the pre-built cargo-chef image with Rust (Debian-based for better tooling)
-FROM lukemathwalker/cargo-chef:latest-rust-1 AS chef
+# Use the pre-built cargo-chef image with Rust (Alpine-based for smaller size)
+FROM lukemathwalker/cargo-chef:latest-rust-alpine AS chef
 
 # Add ARM64 target for cross-compilation
 RUN rustup target add aarch64-unknown-linux-gnu
 
-# Install cargo-lambda
-RUN curl -fsSL https://cargo-lambda.info/install.sh | sh
+# Install Zig (lightweight version for cargo-zigbuild)
+ARG ZIG_VERSION=0.14.0
+RUN apk add --no-cache curl xz && \
+    curl -fsSL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-$(uname -m)-${ZIG_VERSION}.tar.xz" | \
+    tar -xJ -C /usr/local --strip-components=1 && \
+    rm -rf /var/cache/apk/*
+
+# Install cargo-lambda (pre-built binary)
+ARG CARGO_LAMBDA_VERSION=v1.8.5
+RUN apk add --no-cache curl && \
+    curl -fsSL "https://github.com/cargo-lambda/cargo-lambda/releases/download/${CARGO_LAMBDA_VERSION}/cargo-lambda-${CARGO_LAMBDA_VERSION}.$(uname -m)-unknown-linux-musl.tar.gz" | \
+    tar -xz -C /usr/local/bin && \
+    rm -rf /var/cache/apk/*
 
 WORKDIR /app
 
