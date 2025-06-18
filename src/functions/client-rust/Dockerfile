@@ -1,5 +1,11 @@
 # Use the official Rust image as the base
-FROM rust:alpine AS builder
+FROM rust:alpine AS chef
+
+# Install build dependencies
+RUN apk add --no-cache musl-dev
+
+# Install cargo-chef for dependency caching
+RUN cargo install cargo-chef
 
 # Install Zig for cross-compilation (recommended way)
 RUN apk add --no-cache wget xz && \
@@ -16,17 +22,28 @@ RUN cargo install cargo-lambda
 # Add ARM64 target for cross-compilation
 RUN rustup target add aarch64-unknown-linux-gnu
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the workspace root files first
+# Planner stage - create recipe for dependencies
+FROM chef AS planner
 COPY Cargo.toml ./
 COPY Cargo.lock ./
+COPY src/functions/client-rust/Cargo.toml ./src/functions/client-rust/
+# Create dummy source files for workspace structure
+RUN mkdir -p src/functions/client-rust/src && \
+    echo "fn main() {}" > src/functions/client-rust/src/main.rs
+RUN cargo chef prepare --recipe-path recipe.json
 
-# Create the directory structure for the workspace member
-RUN mkdir -p src/functions/client-rust
+# Cacher stage - build dependencies only
+FROM chef AS cacher
+COPY --from=planner /app/recipe.json recipe.json
+RUN cargo chef cook --release --recipe-path recipe.json
 
-# Copy the function's Cargo.toml and source code
+# Builder stage - build the actual application
+FROM chef AS builder
+COPY --from=cacher /app/target target
+COPY Cargo.toml ./
+COPY Cargo.lock ./
 COPY src/functions/client-rust/Cargo.toml ./src/functions/client-rust/
 COPY src/functions/client-rust/src ./src/functions/client-rust/src
 
