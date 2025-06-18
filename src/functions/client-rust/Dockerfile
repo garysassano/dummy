@@ -1,11 +1,5 @@
-# Use the official Rust image as the base
-FROM rust:alpine AS chef
-
-# Install build dependencies
-RUN apk add --no-cache musl-dev
-
-# Install cargo-chef for dependency caching
-RUN cargo install cargo-chef
+# Use the pre-built cargo-chef image with Rust (Alpine variant for smaller size)
+FROM lukemathwalker/cargo-chef:latest-rust-alpine AS chef
 
 # Install Zig for cross-compilation (recommended way)
 RUN apk add --no-cache wget xz && \
