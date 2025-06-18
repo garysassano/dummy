@@ -6,10 +6,8 @@ RUN rustup target add aarch64-unknown-linux-gnu
 
 # Install cargo-lambda (pre-built binary)
 ARG CARGO_LAMBDA_VERSION=v1.8.5
-RUN apk add --no-cache wget && \
-    wget -O- "https://github.com/cargo-lambda/cargo-lambda/releases/download/${CARGO_LAMBDA_VERSION}/cargo-lambda-${CARGO_LAMBDA_VERSION}.x86_64-unknown-linux-musl.tar.gz" | \
-    tar -xz -C /usr/local/bin && \
-    rm -rf /var/cache/apk/*
+RUN cargo install cargo-binstall && \
+    cargo binstall cargo-lambda --version ${CARGO_LAMBDA_VERSION}
 
 # Install Zig (lightweight version for cargo-zigbuild)
 ARG ZIGVER=0.14.0
