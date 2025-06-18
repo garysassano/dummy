@@ -5,7 +5,7 @@ FROM lukemathwalker/cargo-chef:latest-rust-alpine AS chef
 RUN rustup target add aarch64-unknown-linux-gnu
 
 # Install cargo-lambda
-curl -fsSL https://cargo-lambda.info/install.sh | sh
+RUN curl -fsSL https://cargo-lambda.info/install.sh | sh
 
 WORKDIR /app
 
