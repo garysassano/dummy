@@ -30,8 +30,8 @@ jobs:
           file: src/functions/client-rust/Dockerfile
           push: false
           outputs: type=local,dest=./build-output
-          cache-to: type=gha,mode=max,scope=lambda-build-${{ hashFiles('src/functions/client-rust/src/**', 'src/functions/client-rust/Cargo.toml') }}
-          cache-from: type=gha,scope=lambda-build-${{ hashFiles('src/functions/client-rust/src/**', 'src/functions/client-rust/Cargo.toml') }}
+          cache-to: type=gha,mode=max,scope=lambda-build
+          cache-from: type=gha,scope=lambda-build
 
       - name: Upload Lambda Artifact
         uses: actions/upload-artifact@v4

@@ -2,7 +2,7 @@
 FROM rust:alpine AS builder
 
 # Install dependencies
-RUN apk add --no-cache curl xz musl-dev gcc
+RUN apk add --no-cache curl xz musl-dev
 
 # Add cross-compilation targets
 RUN set -eux; \
