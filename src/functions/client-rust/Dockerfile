@@ -12,7 +12,7 @@ RUN apk add --no-cache wget && \
     rm -rf /var/cache/apk/*
 
 # Install Zig (lightweight version for cargo-zigbuild)
-ARG ZIGVER=0.14.1
+ARG ZIGVER=0.14.0
 RUN apk add --no-cache curl xz && \
     curl -L "https://ziglang.org/download/${ZIGVER}/zig-linux-$(uname -m)-${ZIGVER}.tar.xz" | \
     tar -xJ -C /usr/local --strip-components=1 && \
