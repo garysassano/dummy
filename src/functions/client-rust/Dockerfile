@@ -13,6 +13,9 @@ ENV PATH="/opt/zig-linux-x86_64-0.13.0:${PATH}"
 # Install cargo-lambda for building AWS Lambda functions
 RUN cargo install cargo-lambda
 
+# Add ARM64 target for cross-compilation
+RUN rustup target add aarch64-unknown-linux-gnu
+
 # Set the working directory
 WORKDIR /app
 
