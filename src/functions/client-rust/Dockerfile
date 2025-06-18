@@ -7,10 +7,14 @@ RUN set -eux; \
     rustup toolchain install stable; \
     rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
 
-# Install Zig (required by cargo-lambda for cross-compilation)
-ARG ZIG_VERSION=0.14.0
-RUN curl -fsSL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-$(uname -m)-${ZIG_VERSION}.tar.xz" | \
-    tar -xJ -C /usr/local/bin --strip-components=1 zig-linux-$(uname -m)-${ZIG_VERSION}/zig
+# Install Zig for cross-compilation (recommended way)
+RUN apk add --no-cache wget xz && \
+    wget -q https://ziglang.org/download/0.13.0/zig-linux-x86_64-0.13.0.tar.xz && \
+    tar -xf zig-linux-x86_64-0.13.0.tar.xz -C /opt && \
+    rm zig-linux-x86_64-0.13.0.tar.xz
+
+# Add Zig to PATH
+ENV PATH="/opt/zig-linux-x86_64-0.13.0:${PATH}"
 
 # Install cargo-lambda (pre-built binary)
 ARG CARGO_LAMBDA_VERSION=v1.8.5
