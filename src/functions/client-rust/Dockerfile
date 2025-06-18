@@ -30,6 +30,7 @@ COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 # Build application
 COPY . .
+RUN which zig && zig version
 RUN cargo lambda build --release --arm64 --package client-rust
 
 # Export stage - copy the built binary to a scratch image
