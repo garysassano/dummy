@@ -8,11 +8,11 @@ RUN set -eux; \
     rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
 
 # Install Zig for cross-compilation
-RUN echo "Architecture: $(uname -m)" && \
+RUN apt-get update && apt-get install -y --no-install-recommends xz-utils && \
     curl -fsSL "https://ziglang.org/download/0.13.0/zig-linux-$(uname -m)-0.13.0.tar.xz" | \
-    tar -xJ --strip-components=1 --wildcards -C /usr/local/bin '*/zig' && \
-    ls -la /usr/local/bin/zig* && \
-    zig version
+    tar -xJ -C /opt && mv /opt/zig-linux-* /opt/zig && \
+    apt-get purge -y xz-utils && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+ENV PATH="/opt/zig:${PATH}"
 
 # Install cargo-lambda (pre-built binary)
 ARG CARGO_LAMBDA_VERSION=v1.8.5
@@ -33,15 +33,8 @@ COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 # Build application
 COPY . .
-RUN echo "=== DEBUG BUILDER STAGE ===" && \
-    echo "Architecture: $(uname -m)" && \
-    echo "PATH: $PATH" && \
-    ls -la /usr/local/bin/ && \
-    echo "=== END DEBUG ==="
-RUN which zig && zig version
 RUN cargo lambda build --release --arm64 --package client-rust
 
 # Export stage - copy the built binary to a scratch image
 FROM scratch AS export
 COPY --from=builder /app/target/lambda/client-rust/bootstrap /bootstrap
-
