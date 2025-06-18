@@ -8,14 +8,23 @@ RUN set -eux; \
     rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
 
 # Install Zig for cross-compilation (recommended way)
-RUN apt-get update && apt-get install -y wget xz-utils && \
-    wget -q https://ziglang.org/download/0.13.0/zig-linux-x86_64-0.13.0.tar.xz && \
-    tar -xf zig-linux-x86_64-0.13.0.tar.xz -C /opt && \
-    rm zig-linux-x86_64-0.13.0.tar.xz && \
+RUN set -eux; \
+    apt-get update && apt-get install -y wget xz-utils; \
+    arch="$(uname -m)"; \
+    case "$arch" in \
+        x86_64) zigArch='x86_64';; \
+        aarch64) zigArch='aarch64';; \
+        armv7l) zigArch='armv7a';; \
+        *) echo "Unsupported architecture: $arch" && exit 1;; \
+    esac; \
+    wget -q "https://ziglang.org/download/0.13.0/zig-linux-${zigArch}-0.13.0.tar.xz"; \
+    tar -xf "zig-linux-${zigArch}-0.13.0.tar.xz" -C /opt; \
+    rm "zig-linux-${zigArch}-0.13.0.tar.xz"; \
+    mv "/opt/zig-linux-${zigArch}-0.13.0" /opt/zig; \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Add Zig to PATH
-ENV PATH="/opt/zig-linux-x86_64-0.13.0:${PATH}"
+ENV PATH="/opt/zig:${PATH}"
 
 # Install cargo-lambda (pre-built binary)
 ARG CARGO_LAMBDA_VERSION=v1.8.5
