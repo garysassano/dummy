@@ -1,5 +1,5 @@
 # Use the official Rust image as the base
-FROM rust:alpine AS builder
+FROM rust:latest AS builder
 
 # Add cross-compilation targets
 RUN set -eux; \
