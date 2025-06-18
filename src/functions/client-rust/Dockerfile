@@ -8,11 +8,8 @@ RUN set -eux; \
     rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
 
 # Install Zig for cross-compilation
-RUN apt-get update && apt-get install -y --no-install-recommends xz-utils && \
-    curl -fsSL "https://ziglang.org/download/0.13.0/zig-linux-$(uname -m)-0.13.0.tar.xz" | \
-    tar -xJ -C /opt && mv /opt/zig-linux-* /opt/zig && \
-    apt-get purge -y xz-utils && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
-ENV PATH="/opt/zig:${PATH}"
+RUN curl -fsSL "https://ziglang.org/download/0.13.0/zig-linux-$(uname -m)-0.13.0.tar.xz" | \
+    tar -xJ -C /usr/local --strip-components=1
 
 # Install cargo-lambda (pre-built binary)
 ARG CARGO_LAMBDA_VERSION=v1.8.5
