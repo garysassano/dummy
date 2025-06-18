@@ -10,7 +10,8 @@ RUN set -eux; \
 # Install Zig for cross-compilation
 RUN apt-get update && apt-get install -y xz-utils && \
     curl -fsSL "https://ziglang.org/download/0.13.0/zig-linux-$(uname -m)-0.13.0.tar.xz" | \
-    tar -xJ -C /opt --transform 's/^[^/]*/zig/' && \
+    tar -xJ -C /tmp && \
+    mv /tmp/zig-linux-* /opt/zig && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 ENV PATH="/opt/zig:${PATH}"
 
