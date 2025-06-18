@@ -10,8 +10,8 @@ RUN set -eux; \
 # Install Zig for cross-compilation
 ARG ZIG_VERSION=0.14.0
 RUN curl -fsSL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-$(uname -m)-${ZIG_VERSION}.tar.xz" | \
-    tar -xJ -C /opt --strip-components=1 --wildcards '*/zig'
-ENV PATH="/opt:${PATH}"
+    tar -xJ -C /opt && mv /opt/zig-linux-* /opt/zig
+ENV PATH="/opt/zig:${PATH}"
 
 # Install cargo-lambda (pre-built binary)
 ARG CARGO_LAMBDA_VERSION=v1.8.5
