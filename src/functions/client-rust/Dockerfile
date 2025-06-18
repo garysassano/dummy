@@ -4,17 +4,8 @@ FROM lukemathwalker/cargo-chef:latest-rust-alpine AS chef
 # Add ARM64 target for cross-compilation
 RUN rustup target add aarch64-unknown-linux-gnu
 
-# Install cargo-lambda (pre-built binary)
-ARG CARGO_LAMBDA_VERSION=v1.8.5
-RUN cargo install cargo-binstall && \
-    cargo binstall cargo-lambda --version ${CARGO_LAMBDA_VERSION}
-
-# Install Zig (lightweight version for cargo-zigbuild)
-ARG ZIGVER=0.14.0
-RUN apk add --no-cache curl xz && \
-    curl -L "https://ziglang.org/download/${ZIGVER}/zig-linux-$(uname -m)-${ZIGVER}.tar.xz" | \
-    tar -xJ -C /usr/local --strip-components=1 && \
-    rm -rf /var/cache/apk/*
+# Install cargo-lambda
+curl -fsSL https://cargo-lambda.info/install.sh | sh
 
 WORKDIR /app
 
