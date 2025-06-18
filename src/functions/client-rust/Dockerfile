@@ -7,21 +7,10 @@ RUN set -eux; \
     rustup toolchain install stable; \
     rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
 
-# Install Zig for cross-compilation (recommended way)
-RUN set -eux; \
-    apt-get update && apt-get install -y wget xz-utils; \
-    arch="$(uname -m)"; \
-    case "$arch" in \
-        x86_64) zigArch='x86_64';; \
-        aarch64) zigArch='aarch64';; \
-        armv7l) zigArch='armv7a';; \
-        *) echo "Unsupported architecture: $arch" && exit 1;; \
-    esac; \
-    wget -q "https://ziglang.org/download/0.13.0/zig-linux-${zigArch}-0.13.0.tar.xz"; \
-    tar -xf "zig-linux-${zigArch}-0.13.0.tar.xz" -C /opt; \
-    rm "zig-linux-${zigArch}-0.13.0.tar.xz"; \
-    mv "/opt/zig-linux-${zigArch}-0.13.0" /opt/zig; \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# Install Zig (required by cargo-lambda for cross-compilation)
+ARG ZIG_VERSION=0.14.0
+RUN curl -fsSL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-$(uname -m)-${ZIG_VERSION}.tar.xz" | \
+    tar -xJ -C /usr/local/bin --strip-components=1 zig-linux-$(uname -m)-${ZIG_VERSION}/zig
 
 # Add Zig to PATH
 ENV PATH="/opt/zig:${PATH}"
