@@ -1,8 +1,11 @@
 # Use the pre-built cargo-chef image with Rust (Alpine-based for smaller size)
-FROM lukemathwalker/cargo-chef:latest-rust-alpine AS chef
+ARG RUST_VERSION=1.85.0
+FROM lukemathwalker/cargo-chef:latest-rust-${RUST_VERSION}-alpine AS chef
 
-# Add ARM64 target for cross-compilation
-RUN rustup target add aarch64-unknown-linux-gnu
+# Add cross-compilation targets
+RUN set -eux; \
+    rustup toolchain install stable; \
+    rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
 
 # Install Zig (lightweight version for cargo-zigbuild)
 ARG ZIG_VERSION=0.14.0
