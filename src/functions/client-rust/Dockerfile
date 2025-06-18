@@ -1,14 +1,11 @@
-# Use the pre-built cargo-chef image with Rust (Alpine-based for smaller size)
+# Use the pre-built cargo-chef image with Rust
 ARG RUST_VERSION=1.85.0
-FROM lukemathwalker/cargo-chef:latest-rust-${RUST_VERSION}-alpine AS chef
+FROM lukemathwalker/cargo-chef:latest-rust-${RUST_VERSION} AS chef
 
 # Add cross-compilation targets
 RUN set -eux; \
     rustup toolchain install stable; \
     rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
-
-# Install system dependencies
-RUN apk add --no-cache curl xz
 
 # Install Zig (required by cargo-lambda for cross-compilation)
 ARG ZIG_VERSION=0.14.0
@@ -34,7 +31,7 @@ COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 # Build application
 COPY . .
-RUN cargo lambda build --release --arm64 --package client-rust
+RUN zig version && zig cc --version && cargo lambda build --release --arm64 --package client-rust
 
 # Export stage - copy the built binary to a scratch image
 FROM scratch AS export
