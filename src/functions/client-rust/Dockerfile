@@ -8,8 +8,11 @@ RUN set -eux; \
     rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
 
 # Install Zig for cross-compilation
-RUN curl -fsSL "https://ziglang.org/download/0.13.0/zig-linux-$(uname -m)-0.13.0.tar.xz" | \
-    tar -xJ -C /usr/local --strip-components=1
+RUN echo "Architecture: $(uname -m)" && \
+    curl -fsSL "https://ziglang.org/download/0.13.0/zig-linux-$(uname -m)-0.13.0.tar.xz" | \
+    tar -xJ --strip-components=1 --wildcards -C /usr/local/bin '*/zig' && \
+    ls -la /usr/local/bin/zig* && \
+    zig version
 
 # Install cargo-lambda (pre-built binary)
 ARG CARGO_LAMBDA_VERSION=v1.8.5
@@ -30,6 +33,11 @@ COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 # Build application
 COPY . .
+RUN echo "=== DEBUG BUILDER STAGE ===" && \
+    echo "Architecture: $(uname -m)" && \
+    echo "PATH: $PATH" && \
+    ls -la /usr/local/bin/ && \
+    echo "=== END DEBUG ==="
 RUN which zig && zig version
 RUN cargo lambda build --release --arm64 --package client-rust
 
