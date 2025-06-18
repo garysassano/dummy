@@ -7,16 +7,17 @@ RUN set -eux; \
     rustup toolchain install stable; \
     rustup target install x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu;
 
+# Install system dependencies
+RUN apk add --no-cache curl xz
+
 # Install Zig (required by cargo-lambda for cross-compilation)
 ARG ZIG_VERSION=0.14.0
-RUN apk add --no-cache curl xz && \
-    curl -fsSL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-$(uname -m)-${ZIG_VERSION}.tar.xz" | \
+RUN curl -fsSL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-$(uname -m)-${ZIG_VERSION}.tar.xz" | \
     tar -xJ -C /usr/local/bin --strip-components=1 zig-linux-$(uname -m)-${ZIG_VERSION}/zig
 
 # Install cargo-lambda (pre-built binary)
 ARG CARGO_LAMBDA_VERSION=v1.8.5
-RUN apk add --no-cache curl && \
-    curl -fsSL "https://github.com/cargo-lambda/cargo-lambda/releases/download/${CARGO_LAMBDA_VERSION}/cargo-lambda-${CARGO_LAMBDA_VERSION}.$(uname -m)-unknown-linux-musl.tar.gz" | \
+RUN curl -fsSL "https://github.com/cargo-lambda/cargo-lambda/releases/download/${CARGO_LAMBDA_VERSION}/cargo-lambda-${CARGO_LAMBDA_VERSION}.$(uname -m)-unknown-linux-musl.tar.gz" | \
     tar -xz -C /usr/local/bin
 
 WORKDIR /app
