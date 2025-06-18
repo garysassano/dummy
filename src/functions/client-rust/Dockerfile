@@ -21,18 +21,13 @@ FROM chef AS planner
 COPY . .
 RUN cargo chef prepare --recipe-path recipe.json
 
-# Cacher stage - build dependencies only
-FROM chef AS cacher
-COPY --from=planner /app/recipe.json recipe.json
-RUN cargo chef cook --release --recipe-path recipe.json
-
-# Builder stage - build the actual application
+# Builder stage - build dependencies and application
 FROM chef AS builder
-COPY --from=cacher /app/recipe.json recipe.json
+COPY --from=planner /app/recipe.json recipe.json
+# Build dependencies - this is the caching Docker layer!
 RUN cargo chef cook --release --recipe-path recipe.json
+# Build application
 COPY . .
-
-# Build the Lambda function for ARM64
 RUN cargo lambda build --release --arm64 --package client-rust
 
 # Export stage - copy the built binary to a scratch image
