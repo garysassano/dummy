@@ -11,8 +11,7 @@ RUN set -eux; \
 ARG ZIG_VERSION=0.14.0
 RUN apk add --no-cache curl xz && \
     curl -fsSL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-$(uname -m)-${ZIG_VERSION}.tar.xz" | \
-    tar -xJ -O zig-linux-$(uname -m)-${ZIG_VERSION}/zig > /usr/local/bin/zig && \
-    chmod +x /usr/local/bin/zig && \
+    tar -xJ -C /usr/local/bin --strip-components=1 zig-linux-$(uname -m)-${ZIG_VERSION}/zig && \
     rm -rf /var/cache/apk/*
 
 # Install cargo-lambda (pre-built binary)
