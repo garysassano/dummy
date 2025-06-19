@@ -22,7 +22,9 @@ WORKDIR /app
 
 # Copy workspace files
 COPY Cargo.toml Cargo.lock ./
-COPY src/functions/client-rust ./src/functions/client-rust
+# Copy the function's Cargo.toml and source code
+COPY src/functions/client-rust/Cargo.toml ./src/functions/client-rust/Cargo.toml
+COPY src/functions/client-rust/src ./src/functions/client-rust/src
 
 # Build the Lambda function
 RUN cargo lambda build --release --arm64 --package client-rust
