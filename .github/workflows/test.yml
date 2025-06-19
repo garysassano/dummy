@@ -9,6 +9,7 @@ on:
       - wip2
       - wip3
       - wip4
+      - chef
   pull_request:
     branches:
       - "**"
