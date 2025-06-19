@@ -1,4 +1,3 @@
-# Use the official Rust image as the base
 ARG RUST_VERSION=1.85.0
 FROM rust:${RUST_VERSION} AS builder
 
