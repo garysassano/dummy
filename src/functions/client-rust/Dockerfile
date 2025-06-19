@@ -1,4 +1,3 @@
-# Use the pre-built cargo-chef image with Rust
 ARG RUST_VERSION=1.85.0
 FROM lukemathwalker/cargo-chef:latest-rust-${RUST_VERSION} AS chef
 
