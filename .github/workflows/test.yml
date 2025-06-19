@@ -9,7 +9,7 @@ on:
       - wip2
       - wip3
       - wip4
-      - docker
+      - chefless
   pull_request:
     branches:
       - "**"
