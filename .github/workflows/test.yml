@@ -53,3 +53,4 @@ jobs:
         with:
           name: client-rust-lambda-arm64
           path: target/lambda/client-rust
+
